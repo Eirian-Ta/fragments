@@ -4,8 +4,8 @@
 
 Practice on doing the initial setup of the back-end microservice project and repo with the goals are:
 
-1. Set up of your development environment
-2. Set up of your git and GitHub repos
+1. Set up development environment
+2. Set up git and GitHub repos
 3. Set up initial development tooling
 4. Begin writing the API server
 5. Set up structured logging
