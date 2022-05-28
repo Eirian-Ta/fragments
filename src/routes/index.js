@@ -1,5 +1,5 @@
 // src/routes/index.js
-const { createErrorResponse, createSuccessResponse } = require('../../src/response');
+const { createSuccessResponse } = require('../../src/response');
 
 const express = require('express');
 
