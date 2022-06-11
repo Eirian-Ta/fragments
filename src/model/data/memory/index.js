@@ -1,3 +1,4 @@
+const logger = require('../../../logger');
 const MemoryDB = require('./memory-db');
 
 // Create two in-memory databases: one for fragment metadata and the other for raw data
@@ -27,7 +28,6 @@ function readFragmentData(ownerId, id) {
 // Get a list of fragment ids/objects for the given user from memory db. Returns a Promise
 async function listFragments(ownerId, expand = false) {
   const fragments = await metadata.query(ownerId);
-
   // If we don't get anything back, or are supposed to give expanded fragments, return
   if (expand || !fragments) {
     return fragments;

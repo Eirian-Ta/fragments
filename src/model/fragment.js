@@ -39,10 +39,10 @@ class Fragment {
     // TODO
     try {
       const fragments = await listFragments(ownerId, expand);
-      return expand ? fragments.map((fragment) => new Fragment(fragment)) : fragments;
+      return fragments;
     } 
-    catch {
-      return [];
+    catch(err){
+      throw new Error(err);
     }
   }
 
@@ -54,12 +54,12 @@ class Fragment {
    */
   static async byId(ownerId, id) {
     // TODO
-    var fragment = await readFragment(ownerId, id);
-    if (!fragment) {
-      throw new Error();
-    } 
-    else {
+    try {
+      var fragment = await readFragment(ownerId, id);
       return new Fragment({ ...fragment });
+    }
+    catch(err){
+      throw new Error(err);
     }
   }
 

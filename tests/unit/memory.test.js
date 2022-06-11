@@ -7,12 +7,14 @@ const {
 } = require('../../src/model/data/memory/index');
 
 describe('fragment db intergrated calls', () => {
-  test('writeFragment() writes a fragment metadata to memory db', async() => {
+  test('writeFragment() writes a fragment metadata to memory db and returns nothing', async() => {
     const testFragment = {
       id: 'testFragmentId',
       ownerId: 'testOwnerId',
     }
-    expect(await writeFragment(testFragment)).toBe(undefined);
+    const returnValue = await writeFragment(testFragment);
+    expect(await readFragment('testOwnerId', 'testFragmentId')).toEqual(testFragment);
+    expect(returnValue).toBe(undefined);
   });
 
   test('readFragment() returns metadata written in memory db by writeFragment()', async() => {
@@ -25,8 +27,11 @@ describe('fragment db intergrated calls', () => {
     expect(result).toEqual(testFragment);
   });
 
-  test('writeFragmentData() write a fragment data to memory db', async() => {
-    expect(await writeFragmentData('testOwnerId', 'testFragmentId','testValue')).toBe(undefined);
+  test('writeFragmentData() write a fragment data to memory db and returns nothing', async() => {
+    const returnValue = await writeFragmentData('testOwnerId', 'testFragmentId','testValue');
+    const result = await readFragmentData('testOwnerId', 'testFragmentId');
+    expect(result).toEqual('testValue');
+    expect(returnValue).toBe(undefined);
   });
 
   test('readFragmentData() returns data written in memory db by writeFragmentData()', async () => {
@@ -43,5 +48,6 @@ describe('fragment db intergrated calls', () => {
     const result = await listFragments('testOwnerId1');
     expect(Array.isArray(result)).toBe(true);
     expect(result.length).toEqual(2);
+    expect(result.every(f => typeof f == 'string')).toBe(true);
   });
 })
