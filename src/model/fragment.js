@@ -16,6 +16,17 @@ const {
 class Fragment {
   constructor({ id, ownerId, created, updated, type, size = 0 }) {
     // TODO
+    if (!ownerId || !type) throw Error('ID and ownerId are required');
+    if (typeof size != 'number' || size < 0) throw Error('size must be a number');
+    if (!Fragment.isSupportedType(type)) throw Error('type must be valid');
+  
+    const now = new Date();
+    this.id = id || nanoid();
+    this.ownerId = ownerId;
+    this.created = created || now.toISOString();
+    this.updated = updated || now.toISOString();
+    this.type = type;
+    this.size = size;
   }
 
   /**
@@ -26,6 +37,13 @@ class Fragment {
    */
   static async byUser(ownerId, expand = false) {
     // TODO
+    try {
+      const fragments = await listFragments(ownerId, expand);
+      return expand ? fragments.map((fragment) => new Fragment(fragment)) : fragments;
+    } 
+    catch {
+      return [];
+    }
   }
 
   /**
@@ -36,6 +54,13 @@ class Fragment {
    */
   static async byId(ownerId, id) {
     // TODO
+    var fragment = await readFragment(ownerId, id);
+    if (!fragment) {
+      throw new Error();
+    } 
+    else {
+      return new Fragment({ ...fragment });
+    }
   }
 
   /**
@@ -46,6 +71,7 @@ class Fragment {
    */
   static delete(ownerId, id) {
     // TODO
+    return deleteFragment(ownerId, id);
   }
 
   /**
@@ -54,6 +80,9 @@ class Fragment {
    */
   save() {
     // TODO
+    let now = new Date();
+    this.updated = now.toISOString();
+    return writeFragment(this);
   }
 
   /**
@@ -62,6 +91,7 @@ class Fragment {
    */
   getData() {
     // TODO
+    return readFragmentData(this.ownerId, this.id);
   }
 
   /**
@@ -71,6 +101,15 @@ class Fragment {
    */
   async setData(data) {
     // TODO
+    if (!data) {
+      throw new Error();
+    }
+    let now = new Date();
+    this.updated = now.toISOString();
+    this.size = data.byteLength;
+
+    await writeFragment(this);
+    return writeFragmentData(this.ownerId, this.id, data);
   }
 
   /**
@@ -89,6 +128,8 @@ class Fragment {
    */
   get isText() {
     // TODO
+    const re = /text\/*/;
+    return re.test(this.mimeType);
   }
 
   /**
@@ -97,6 +138,8 @@ class Fragment {
    */
   get formats() {
     // TODO
+    if (this.mimeType == 'text/plain') return ['text/plain'];
+    else return [];
   }
 
   /**
@@ -106,6 +149,22 @@ class Fragment {
    */
   static isSupportedType(value) {
     // TODO
+    const supportedType = [
+      'text/plain',
+      /*
+      Currently, only text/plain is supported. Others will be added later.
+
+      `text/markdown`,
+      `text/html`,
+      `application/json`,
+      `image/png`,
+      `image/jpeg`,
+      `image/webp`,
+      `image/gif`,
+      */
+    ];
+    const { type } = contentType.parse(value);
+    return supportedType.includes(type);
   }
 }
 
