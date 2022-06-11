@@ -9,7 +9,8 @@ const { createSuccessResponse, createErrorResponse } = require('../../response')
  */
  module.exports = async (req, res) => {
   // TODO
-  logger.info({ req }, `Handling Get request`);
+  logger.info(`Handling Get request`);
+  logger.debug({req});
   const expand = !!+req.query.expand;
   logger.debug({expand}, 'Print Expand value');
   try {

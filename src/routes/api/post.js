@@ -9,7 +9,8 @@ const logger = require('../../logger');
 
 module.exports = async (req, res) => {
   const reqBody = req.body;
-  logger.info({reqBody} ,`Handling post request`);
+  logger.info(`Handling post request`);
+  logger.debug({reqBody} ,`Post request body`);
   if (!Buffer.isBuffer(reqBody)) {
     logger.warn('req.body is not a Buffer');
     return res.status(415).json(createErrorResponse(415, "req.body is not a Buffer"));
