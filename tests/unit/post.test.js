@@ -39,7 +39,7 @@ describe('POST /v1/fragments', () => {
     expect(newFragment.ownerId).toBe(fragmentInPostResponse.ownerId);
     expect(newFragment.id).toBe(fragmentInPostResponse.id);
     expect(newFragment.created).toBe(fragmentInPostResponse.created);
-    expect(newFragment.updated).toBe(fragmentInPostResponse.id);
+    expect(newFragment.updated).toBe(fragmentInPostResponse.updated);
     expect(newFragment.type).toBe('text/plain');
     expect(newFragment.size).toBe(18);
   });

@@ -17,8 +17,8 @@ module.exports = async (req, res) => {
   }
   try {
     const fragment = new Fragment({ ownerId: req.user, type: req.get('content-type') });
-    await fragment.save();
-    await fragment.setData(req.body);
+    await fragment.save(); // write metadata
+    await fragment.setData(req.body); // write raw data
     logger.info({ fragment }, `New fragment created`);
 
     const fullURL = process.env.API_URL + req.originalUrl;
