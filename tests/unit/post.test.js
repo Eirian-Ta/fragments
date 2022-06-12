@@ -6,10 +6,10 @@ const { Fragment } = require('../../src/model/fragment');
 
 describe('POST /v1/fragments', () => {
   // If the request is missing the Authorization header, it should be forbidden
-  test('unauthenticated requests are denied', () => request(app).post('/v1/fragments').expect(401));
+  test('Unauthenticated requests are denied', () => request(app).post('/v1/fragments').expect(401));
 
   // If the wrong username/password pair are used (no such user), it should be forbidden
-  test('incorrect credentials are denied', () =>
+  test('Incorrect credentials are denied', () =>
     request(app).post('/v1/fragments').auth('invalid@email.com', 'incorrect_password').expect(401));
 
   // Incorrect content type should return 415
@@ -25,7 +25,7 @@ describe('POST /v1/fragments', () => {
   });
 
   // Using a valid username/password pair should give a success result
-  test('Authenticated users with Content-type text/plain can post a fragment', async () => {
+  test('Authenticated users can create a plain text fragment', async () => {
     const resPost = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
@@ -34,7 +34,12 @@ describe('POST /v1/fragments', () => {
 
     const fragmentInPostResponse = resPost.body.fragment;
     const newFragment = await Fragment.byId(fragmentInPostResponse.ownerId, fragmentInPostResponse.id);
+    console.log(fragmentInPostResponse)
+    console.log(newFragment)
+    expect(newFragment.ownerId).toBe(fragmentInPostResponse.ownerId);
     expect(newFragment.id).toBe(fragmentInPostResponse.id);
+    expect(newFragment.created).toBe(fragmentInPostResponse.created);
+    expect(newFragment.updated).toBe(fragmentInPostResponse.id);
     expect(newFragment.type).toBe('text/plain');
     expect(newFragment.size).toBe(18);
   });

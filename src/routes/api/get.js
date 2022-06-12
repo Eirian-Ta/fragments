@@ -11,7 +11,7 @@ const { createSuccessResponse, createErrorResponse } = require('../../response')
   // TODO
   logger.info(`Handling Get request`);
   logger.debug({req});
-  const expand = !!+req.query.expand;
+  const expand = !!req.query.expand;
   logger.debug({expand}, 'Print Expand value');
   try {
     let fragments = await Fragment.byUser(req.user, expand);
