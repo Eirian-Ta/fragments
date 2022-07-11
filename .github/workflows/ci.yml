@@ -54,31 +54,30 @@ jobs:
           dockerfile: Dockerfile
 
   unit-tests:
-    name: Unit Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v2
+      name: Unit Tests
+      runs-on: ubuntu-latest
+      steps:
+        - name: Check out code
+          uses: actions/checkout@v2
 
-      - name: Setup node
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-          cache: 'npm'
+        - name: Setup node
+          uses: actions/setup-node@v2
+          with:
+            node-version: '16'
+            cache: 'npm'
 
-      - name: Install node dependencies and run Tests
-        # There are two ways we could do this:
-        #
-        # 1. Call `npm ci` followed by `npm test` like so (NOTE: the use of | and -):
-        # run: |
-        # - npm install
-        # - npm test
-        #
-        # 2. Use `install-ci-test` to do it in a single command, see https://docs.npmjs.com/cli/v8/commands/npm-install-ci-test
-        # run: npm install-ci-test
+        - name: Install node dependencies and run Tests
+          # There are two ways we could do this:
+          #
+          # 1. Call `npm ci` followed by `npm test` like so (NOTE: the use of | and -):
+          # run: |
+          # - npm install
+          # - npm test
+          #
+          # 2. Use `install-ci-test` to do it in a single command, see https://docs.npmjs.com/cli/v8/commands/npm-install-ci-test
+          # run: npm install-ci-test
           run: npm install-ci-test
-
-
+  
   docker-hub:
     name: Build and Push to Docker Hub
     # Don't bother running this job unless the other three all pass
@@ -102,7 +101,7 @@ jobs:
       - name: Build and push
         env:
           # Define an Environment Variable with our Docker Hub Repo
-          # Replace `username` with your Docker Hub username and `fragments
+          # Replace `username` with your Docker Hub username and `fragments`
           # with whatever you've named your Docker Hub repo
           DOCKERHUB_REPO: eirianta/fragments
           # Define an Environment Variable with the current git commit's
