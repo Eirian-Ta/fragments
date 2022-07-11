@@ -55,7 +55,7 @@ COPY ./src ./src
 COPY ./tests/.htpasswd ./tests/.htpasswd
 
 # Install curl
-RUN apk --no-cache add curl=7.83.1-r1
+RUN apk --no-cache add curl=7.83.1-r2
 
 # Start the container by running our server
 # CMD npm start
