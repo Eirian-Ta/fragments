@@ -2,6 +2,7 @@
 const { nanoid } = require('nanoid');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
+const md = require('markdown-it')();
 
 // Functions for working with fragment metadata/data using our DB
 const {
@@ -94,6 +95,18 @@ class Fragment {
     return readFragmentData(this.ownerId, this.id);
   }
 
+  /**Added to convert fragment's data to different type */
+  async convertData(type) {
+    const rawData = await this.getData();
+    if (type != this.mimeType) {
+      if (type == 'text/html') {
+        const stringData = rawData.toString();
+        return md.render(stringData);
+      }
+    }
+    return rawData;
+  }
+
   /**
    * Set's the fragment's data in the database
    * @param {Buffer} data
@@ -137,9 +150,18 @@ class Fragment {
    * @returns {Array<string>} list of supported mime types
    */
   get formats() {
-    // TODO
-    if (this.mimeType == 'text/plain') return ['text/plain'];
-    else return [];
+    switch (this.mimeType) {
+      case 'text/plain':
+        return ['text/plain'];
+      case 'text/markdown':
+        return ['text/markdown', 'text/html', 'text/plain'];
+      case 'text/html':
+        return ['text/html', 'text/plain'];
+      case 'application/json':
+        return ['text/plain', 'application/json'];
+      default:
+        return [];
+    }
   }
 
   /**
@@ -151,12 +173,13 @@ class Fragment {
     // TODO
     const supportedType = [
       'text/plain',
-      /*
-      Currently, only text/plain is supported. Others will be added later.
-
+      'application/json',
       `text/markdown`,
       `text/html`,
-      `application/json`,
+      /*
+      Currently, only text (e.g., text/plain, text/markdown, text/html, etc.), and JSON data (application/json) are supported. 
+      Other type of image will be added later.
+
       `image/png`,
       `image/jpeg`,
       `image/webp`,

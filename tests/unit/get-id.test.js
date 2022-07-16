@@ -7,12 +7,12 @@ const { Fragment } = require('../../src/model/fragment');
 describe('GET /v1/fragments/:id', () => {
   let testFragment;
   const fragmentData = 'This is a fragment';
-  const fragmentSetup = async () => {
+  const fragmentSetup = async (type = 'text/plain', testData = fragmentData) => {
     const postRequest = await request(app)
       .post('/v1/fragments')
       .auth('user1@email.com', 'password1')
-      .set('Content-type', 'text/plain')
-      .send(fragmentData);
+      .set('Content-type', type)
+      .send(testData);
 
       testFragment = postRequest.body.fragment;
   };
@@ -26,7 +26,7 @@ describe('GET /v1/fragments/:id', () => {
    test('unauthenticated requests are denied', async () => {
     await fragmentSetup();
     await request(app)
-      .get('/v1/fragments/id')
+      .get(`/v1/fragments/${testFragment.id}`)
       .expect(401);
   });
 
@@ -57,4 +57,67 @@ describe('GET /v1/fragments/:id', () => {
     expect(res.statusCode).toBe(200);
     expect(res.text).toBe(fragmentData);
    });
+
+   test('get/:id.html request returns the same fragment data for fragment text/html type', async () => {
+    const mockData = `<p>${fragmentData}</p>`;
+    await fragmentSetup('text/html', mockData);
+    const res = await request(app)
+      .get(`/v1/fragments/${testFragment.id}.html`)
+      .auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(200);
+    expect(res.text).toBe(mockData);
+  });
+
+  test('get/:id.html request returns a markdown fragment data converted to Html.', async () => {
+    await fragmentSetup('text/markdown');
+    const res = await request(app)
+      .get(`/v1/fragments/${testFragment.id}.html`)
+      .auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(200);
+    expect(res.text).toBe(`<p>${fragmentData}</p>\n`);
+  });
+
+  test('get/:id.txt request returns a text/html fragment data converted to text/plain type', async () => {
+    const mockData = `<p>${fragmentData}</p>`;
+    await fragmentSetup('text/html', mockData);
+    const res = await request(app)
+      .get(`/v1/fragments/${testFragment.id}.txt`)
+      .auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(200);
+    expect(res.header['content-type']).toBe('text/plain');
+    expect(res.text).toBe(mockData);
+  });
+
+  test('get/:id.txt request returns a markdown fragment data converted to text/plain type', async () => {
+    const mockData = `# ${fragmentData}`;
+    await fragmentSetup('text/markdown', mockData);
+    const res = await request(app)
+      .get(`/v1/fragments/${testFragment.id}.txt`)
+      .auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(200);
+    expect(res.header['content-type']).toBe('text/plain');
+    expect(res.text).toBe(mockData);
+  });
+
+  test('get/:id.txt request returns a JSON fragment data converted to text/plain type', async () => {
+    const mockData = {
+      id: 1,
+      value: 'Test',
+    };
+    await fragmentSetup('application/json', mockData);
+    const res = await request(app)
+      .get(`/v1/fragments/${testFragment.id}.txt`)
+      .auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(200);
+    expect(res.header['content-type']).toBe('text/plain');
+    expect(res.text).toBe(JSON.stringify(mockData));
+  });
+
+  test('get/:id.invalid request for text fragment returns 415.', async () => {
+    await fragmentSetup();
+    const res = await request(app)
+      .get(`/v1/fragments/${testFragment.id}.invalid`)
+      .auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(415);
+  });
 })
