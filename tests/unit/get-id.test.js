@@ -68,13 +68,15 @@ describe('GET /v1/fragments/:id', () => {
     expect(res.text).toBe(mockData);
   });
 
-  test('get/:id.html request returns a markdown fragment data converted to Html.', async () => {
-    await fragmentSetup('text/markdown');
+  test('get/:id.html request returns a markdown fragment data converted to text/html', async () => {
+    const mockData = `# ${fragmentData}`;
+    await fragmentSetup('text/markdown', mockData);
     const res = await request(app)
       .get(`/v1/fragments/${testFragment.id}.html`)
       .auth('user1@email.com', 'password1');
     expect(res.statusCode).toBe(200);
-    expect(res.text).toBe(`<p>${fragmentData}</p>\n`);
+    expect(res.header['content-type']).toBe('text/html; charset=utf-8');
+    expect(res.text).toBe(`<h1>${fragmentData}</h1>\n`);
   });
 
   test('get/:id.txt request returns a text/html fragment data converted to text/plain type', async () => {
