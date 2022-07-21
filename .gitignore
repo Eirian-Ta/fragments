@@ -105,3 +105,6 @@ dist
 
 # EC2
 ec2*
+
+aws/
+*.zip

@@ -1,3 +1,4 @@
 node_modules/
+aws/
 package.json
 package-lock.json
