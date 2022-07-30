@@ -25,8 +25,6 @@ express.raw({
   },
 });
 
-
-
 // Define our first route, which will be: GET /v1/fragments
 router.get('/fragments', require('./get'));
 
@@ -36,7 +34,7 @@ router.post('/fragments', rawBody(), require('./post'));
 router.get('/fragments/:id', require('./get-id'));
 router.get('/fragments/:id/info', require('./get-info'));
 // router.put('/fragments/:id', rawBody(), require('./put'));
-// router.delete('/fragments/:id', require('./delete'));
+router.delete('/fragments/:id', require('./delete'));
 
  
  module.exports = router;

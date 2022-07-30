@@ -1,6 +1,6 @@
 // src/authorization/index.js
 
-if (process.env.NODE_ENV == 'development') {
+if (process.env.NODE_ENV == 'development' || process.env.HTPASSWD_FILE) {
   module.exports = require('./basic-auth');
 }
 // Prefer Amazon Cognito
