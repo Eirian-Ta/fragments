@@ -1,5 +1,4 @@
 const logger = require('../../../logger');
-const MemoryDB = require('../memory/memory-db'); // XXX: temporary use of memory-db until we add DynamoDB
 
 const s3Client = require('./s3Client');
 const ddbDocClient = require('./ddbDocClient');
