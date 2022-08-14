@@ -7,7 +7,7 @@
     "test:watch": "jest -c jest.config.js --runInBand --watch --",
     "test": "jest -c jest.config.js --runInBand --",
     "coverage": "jest -c jest.config.js --runInBand --coverage",
-    "test:integration": "hurl --test --glob \"tests/integration/**/*.hurl\"",
+    "test:integration": "hurl --test --file-root \"tests\" --glob \"tests/integration/**/*.hurl\"",
     "lint": "eslint --config .eslintrc.js src/** tests/** --no-error-on-unmatched-pattern",
     "start": "node src/index.js",
     "dev": "LOG_LEVEL=debug NODE_ENV=development nodemon ./src/index.js --watch src",
@@ -54,6 +54,7 @@
     "pino": "^7.11.0",
     "pino-http": "^7.0.0",
     "pino-pretty": "^7.6.1",
+    "sharp": "^0.30.7",
     "stoppable": "^1.1.0"
   }
 }

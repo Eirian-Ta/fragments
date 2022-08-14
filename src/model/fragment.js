@@ -3,6 +3,7 @@ const { nanoid } = require('nanoid');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
 const md = require('markdown-it')();
+const sharp = require('sharp');
 
 // Functions for working with fragment metadata/data using our DB
 const {
@@ -103,6 +104,12 @@ class Fragment {
         const stringData = rawData.toString();
         return md.render(stringData);
       }
+      const imageReg = /image\/*/;
+      if (imageReg.test(type)) {
+        const format = type.replace('image/', '');
+        const data = await sharp(rawData).toFormat(format).toBuffer();
+        return data;
+      }
     }
     return rawData;
   }
@@ -159,6 +166,14 @@ class Fragment {
         return ['text/html', 'text/plain'];
       case 'application/json':
         return ['text/plain', 'application/json'];
+      case 'image/png':
+        return ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
+      case 'image/jpeg':
+        return ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
+      case 'image/webp':
+        return ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
+      case 'image/gif':
+        return ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
       default:
         return [];
     }
@@ -176,15 +191,10 @@ class Fragment {
       'application/json',
       `text/markdown`,
       `text/html`,
-      /*
-      Currently, only text (e.g., text/plain, text/markdown, text/html, etc.), and JSON data (application/json) are supported. 
-      Other type of image will be added later.
-
-      `image/png`,
-      `image/jpeg`,
-      `image/webp`,
-      `image/gif`,
-      */
+      'image/png',
+      'image/jpeg',
+      'image/webp',
+      'image/gif',
     ];
     const { type } = contentType.parse(value);
     return supportedType.includes(type);
